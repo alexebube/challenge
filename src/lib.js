@@ -1,52 +1,56 @@
-// const listProduct = (a = []) => (b = []) => [].concat(...a.map(a1 => b.map(b1 => [].concat(a1, b1))));
-
-function* listProduct(head, ...tail) {
-    const remainder = tail.length > 0 ? listProduct(...tail) : [[]];
-    for (let r of remainder) for (let h of head) yield [h, ...r];
+function* listProduct(initial, ...rest) {
+    const remainder = rest.length > 0 ? listProduct(...rest) : [[]];
+    for (let r of remainder) for (let i of initial) yield [i, ...r];
 }
 
-const getInputArrays = (xs = []) => xs.map(x => x.split(','));
+const getInputArrays = (inputData = []) => inputData.map(x => x.split(','));
 
-const getPairs = fn => (acc = []) => (xs = []) => {
-    const len = xs.length - 1;
-    for (let i = 0; i <= len; i++) {
-        for (let j = i; j <= len; j++) {
-            acc.push(...fn(xs[i], xs[j]))
+const getPairs = listProduct => (accumulator = {}) => (inputArray = []) => {
+    const len = inputArray.length - 1;
+    for (let i = 0; i < len; i++) {
+        for (let j = 1; j <= len; j++) {
+            accumulator[i] = [...listProduct(inputArray[i], inputArray[j])]
         }
     }
-    return acc
+    return accumulator
 };
 
-const isEqual = (s = '') => (x = '') => (s !== x) && s.split(',').every(a => x.split(',').includes(a));
+const isEqual = (pair1 = '') => (pair2 = '') => (pair1 !== pair2) && pair1.split(',').every(a => pair2.split(',').includes(a));
 
-const countPairs = (xs = []) => xs.filter(([a, b]) => a !== b)
-    .reduce((a, b) => Object.keys(a).includes(b.join(','))
-        ? { ...a, [b.join(',')]: a[b.join(',')] + 1 }
-        : { ...a, [b.join(',')]: 1 }, {});
+const countPairs = (accumulator = {}) => (objectPairs = {}) => {
+    const data = Object.values(objectPairs).flat().filter(([a, b]) => a !== b);
+    for (let i = 0; i < data.length; i++) {
+        const currentValue = data[i].join(',');
+        accumulator[currentValue] = accumulator.hasOwnProperty(currentValue) ? accumulator[currentValue] + 1 : 1
+    }
+    return accumulator
+};
 
-const groupUniquePairs = fn => (acc = {}) => (n = []) => (o = {}) => {
-    const keys = Object.keys(o);
-    for (const a of keys) {
-        let i = 1;
-        for (const b of keys.slice(i)) {
-            if(fn(a)(b)) {
-                if (!acc.hasOwnProperty(a)){
-                    acc[a] = o[a] + o[b];
-                    n.push(a,b)
+const groupUniquePairs = isEqual => (thresholdValue = 0) => (accumulator = {}) => (uniqueNamePair = {}) => (objectPairs = {}) => {
+    const initialFilter = Math.floor(thresholdValue/2);
+    const keys = Object.keys(objectPairs).filter(x => objectPairs[x] >= initialFilter);
+    const len = keys.length - 1;
+    for (let i = 0; i < len; i++) {
+        const a = keys[i];
+        for (let j = i + 1; j <= len; j++) {
+            const b = keys[j];
+            if(isEqual(a)(b)) {
+                if (!accumulator.hasOwnProperty(a)){
+                    accumulator[a] = objectPairs[a] + objectPairs[b];
+                    uniqueNamePair = { ...uniqueNamePair, [a]: a, [b]: b }
                 }
             }
         }
-        if(!acc.hasOwnProperty(a)) {
-            if (!n.includes(a)) {
-                acc[a] = o[a]
+        if(!accumulator.hasOwnProperty(a)) {
+            if (!uniqueNamePair.hasOwnProperty(a)) {
+                accumulator[a] = objectPairs[a]
             }
         }
-        i = i + 1
     }
-    return acc
+    return accumulator
 };
 
-const pairsAboveThreshold = (n = 0) => (xs = {}) => Object.keys(xs).filter(x => o[x] > n);
+const pairsAboveThreshold = (thresholdValue = 0) => (objectPairs = {}) => Object.keys(objectPairs).filter(x => objectPairs[x] >= thresholdValue);
 
 const compose = (...functions) => (args) => functions.reduceRight((arg, fn) => fn(arg), args);
 
