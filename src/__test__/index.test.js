@@ -12,15 +12,15 @@ const {
 const {
   createFileIOInterface
   , readFile
-} = require('../file');
+} = require('../file')
 
-const { readInterface, writeInterface } = createFileIOInterface('src/__test__/data/test.txt')('src/__test__/data/test.csv');
+const { readInterface } = createFileIOInterface('src/__test__/data/test.txt')('src/__test__/data/test.csv')
 
 describe('challenge tests', () => {
   test('should return paired artist greater than 1', async () => {
-    const inputData = await readFile(readInterface)([]);
-    const expected = [ 'Morrissey,Radiohead' ];
+    const inputData = await readFile(readInterface)([])
+    const expected = ['Morrissey,Radiohead']
     const result = compose(pairsAboveThreshold(2), groupUniquePairs(isEqual)(2)({})({}), countPairs({}), getPairs(listProduct)({}), getInputArrays)(inputData)
-   expect(result).toEqual(expected)
+    expect(result).toEqual(expected)
   })
 })
