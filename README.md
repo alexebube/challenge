@@ -24,5 +24,6 @@ npm test
 ```
 
 #### Output
-The output to the program is in the file `src/output/out.csv`. 
-Running will generate the result in same file
+The input file is located in `src/data/Artist_lists_small.txt`
+The output result file to the program is located in `src/output/out.csv`. 
+Running the program will generate the result in the output file
