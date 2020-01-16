@@ -6,7 +6,7 @@ Write a program that, using this file as input, produces an output file containi
 ```
 
 #### Requirements
-- NodeJS runtime
+- [NodeJS >= v12.13.0](https://nodejs.org/en/)
 
 #### Install Dependencies
 ```bash
